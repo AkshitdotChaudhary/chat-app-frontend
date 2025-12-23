@@ -19,6 +19,8 @@
     "@angular/router": "^19.2.16",
     "@stomp/stompjs": "^7.2.1",
     "@types/sockjs-client": "^1.5.4",
+    "primeicons": "^7.0.0",
+    "primeng": "^19.1.4",
     "rxjs": "~7.8.0",
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",

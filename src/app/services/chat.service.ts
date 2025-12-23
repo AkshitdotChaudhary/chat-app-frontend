@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
 import { Client, IMessage, Stomp } from '@stomp/stompjs';
-import { ChatMessage } from '../chatMessage';
+import { ChatMessage } from '../model/chatMessage';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,6 @@ export class ChatService {
   connect(): void {
     const socket = new SockJS('http://localhost:8184/ws');
     this.stompClient = Stomp.over(() => socket);
-
 
     if (this.stompClient) {
       this.stompClient.onConnect = () => {

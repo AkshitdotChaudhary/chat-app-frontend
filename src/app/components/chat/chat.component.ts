@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ChatService } from '../../services/chat.service';
-import { ChatMessage } from '../../chatMessage';
+import { ChatMessage } from '../../model/chatMessage';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
