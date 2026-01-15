@@ -11,13 +11,13 @@ export class ChatService {
   private stompClient: Client | null = null;
   private messagesSubject = new Subject<ChatMessage>();
 
-  connect(): void {
+  connect(conversationId : Number): void {
     const socket = new SockJS('http://localhost:8184/ws');
     this.stompClient = Stomp.over(() => socket);
 
     if (this.stompClient) {
       this.stompClient.onConnect = () => {
-        this.stompClient?.subscribe('/topic/messages', (msg: IMessage | null) => {
+        this.stompClient?.subscribe('/topic/conversation/' + conversationId, (msg: IMessage | null) => {
           if (msg && msg.body) {
             const payload = JSON.parse(msg.body) as ChatMessage;
             this.messagesSubject.next(payload);
@@ -28,21 +28,21 @@ export class ChatService {
     }
   }
 
-
   disconnect(): void {
     this.stompClient?.deactivate();
     this.stompClient = null;
   }
 
-
-  sendMessage(m: ChatMessage): void {
-    if (this.stompClient && this.stompClient.connected) {
-      this.stompClient.publish({ destination: '/app/chat.send', body: JSON.stringify(m) });
-    } else {
-      console.warn('STOMP client not connected');
-    }
+  sendMessage(message: ChatMessage): void {
+  if (this.stompClient && this.stompClient.connected) {
+    this.stompClient.publish({
+      destination: `/app/chat.send/${message.conversationId}`,
+      body: JSON.stringify(message)
+    });
+  } else {
+    console.warn('STOMP client not connected');
   }
-
+}
 
   onMessage(): Observable<ChatMessage> {
     return this.messagesSubject.asObservable();

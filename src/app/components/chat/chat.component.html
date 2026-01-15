@@ -1,14 +1,21 @@
-<div style="max-width:600px;margin:0 auto">
-<h3>WebSocket Chat</h3>
-<div style="border:1px solid #ddd;padding:10px;height:300px;overflow:auto">
-<div *ngFor="let m of messages">
-<strong>{{m.from}}:</strong> {{m.text}}
-</div>
-</div>
+<div class="chat-container">
+  <h3>WebSocket Chat</h3>
 
+  <div class="messages" #scrollBox>
+    <div *ngFor="let m of messages; trackBy: trackById"
+         [class.self]="m.senderId === senderId">
+      <strong>{{ m.senderId }}:</strong> {{ m.content }}
+    </div>
+  </div>
 
-<div style="margin-top:10px">
-<input [(ngModel)]="text" placeholder="Message" (keyup.enter)="send()" />
-<button (click)="send()">Send</button>
-</div>
+  <div class="input-area">
+    <input
+      [(ngModel)]="content"
+      placeholder="Message"
+      (keyup.enter)="send()"
+    />
+    <button (click)="send()">Send</button>
+
+    <button class="logout" (click)="logout()">Log Out</button>
+  </div>
 </div>

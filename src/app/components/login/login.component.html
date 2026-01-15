@@ -1,1 +1,17 @@
-<p>login works!</p>
+<div class="auth-container">
+  <h2>{{ isLogin ? 'Login' : 'Sign Up' }}</h2>
+
+  <form [formGroup]="authForm" (ngSubmit)="submit()">
+    <input type="text" placeholder="username" formControlName="username" />
+    <br>
+    <input type="password" placeholder="Password" formControlName="password" />
+    <br>
+    <button type="submit" [disabled]="authForm.invalid">
+      {{ isLogin ? 'Login' : 'Sign Up' }}
+    </button>
+  </form>
+
+  <p (click)="toggleMode()" class="toggle">
+    {{ isLogin ? 'Create an account' : 'Already have an account?' }}
+  </p>
+</div>

@@ -1,0 +1,28 @@
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.messages {
+  border: 1px solid #ddd;
+  padding: 10px;
+  height: 300px;
+  overflow-y: auto;
+}
+
+.messages div {
+  margin-bottom: 6px;
+}
+
+.messages div.self {
+  text-align: right;
+  color: #1976d2;
+}
+
+.input-area {
+  margin-top: 10px;
+}
+
+.logout {
+  margin-left: 10px;
+}
