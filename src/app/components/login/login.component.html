@@ -1,1 +1,76 @@
-<p>login works!</p>
+<div class="grid m-0 login-wrap align-items-center">
+
+  <div class="col-12 lg:col-6">
+    <h2 class="text-center login-header">
+      Login As
+      <span class="block"
+        >Enter your details to securely access your account</span
+      >
+    </h2>
+    <div class="grid justify-content-center">
+      <div class="col-12 lg:col-8">
+        <p-card styleClass="px-2">
+          <form [formGroup]="loginForm" (submit)="onSubmit()">
+            <div class="mb-5">
+              <p-floatLabel>
+                <input
+                  type="text"
+                  pInputText
+                  class="w-full"
+                  id="loginId"
+                  formControlName="loginId"
+                  [maxlength]="50"
+                  appNoSpace
+                />
+                <label for="loginId">Email ID</label>
+              </p-floatLabel>
+          
+            </div>
+            <div class="mb-4">
+              <p-floatLabel>
+                <p-password
+                  toggleMask="true"
+                  [feedback]="false"
+                  styleClass="w-full cmn-pass"
+                  formControlName="password"
+                  maxLength="16"
+                />
+                <label for="password">Password</label>
+              </p-floatLabel>
+              <small
+                *ngIf="
+                  loginForm.get('password')?.touched &&
+                  loginForm.get('password')?.invalid
+                "
+                class="text-red-500 absolute"
+              >
+                Password is required
+              </small>
+            </div>
+            <div class="flex justify-content-end mb-4">
+              <a routerLink="/cpo-dashboard/forgot-password" class="forgot-pass"
+                >Forgot Password?</a
+              >
+            </div>
+          
+            <p-button
+              type="submit"
+              label="Log In"
+              styleClass="w-full cmn-btn"
+             
+              loadingIcon="pi pi-spinner-dotted"
+            ></p-button>
+            <div class="flex justify-content-end">
+              <div
+                class="text-red-500 custom-checkbox"
+                *ngIf="passwordAttemts < 4"
+              >
+             
+              </div>
+            </div>
+          </form>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
