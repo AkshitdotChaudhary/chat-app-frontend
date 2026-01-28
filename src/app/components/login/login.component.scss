@@ -1,4 +1,4 @@
-@import "../../../assets/scss/variables";
+@import "../../../assets/variables";
 
 :host::ng-deep {
     .logos{
@@ -19,7 +19,7 @@
 
         &-bg {
             min-height: 100vh;
-            background: url(../../../assets/images/cpo-portal/login-bg.jpg) no-repeat center center;
+            // background: url("../../../assets/images/cpo-portal/login-bg.jpg") no-repeat center center;
             background-size: cover;
         }
 
