@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private baseUrl = 'http://localhost:8184/auth/';
+  private baseUrl = 'http://10.8.0.8:8184/auth/';
   router = inject(Router);
 
   constructor(private http: HttpClient) { }

@@ -12,7 +12,7 @@ export class ChatService {
   private messagesSubject = new Subject<ChatMessage>();
 
   connect(conversationId : Number): void {
-    const socket = new SockJS('http://localhost:8184/ws');
+    const socket = new SockJS('http://10.8.0.8:8184/ws');
     this.stompClient = Stomp.over(() => socket);
 
     if (this.stompClient) {

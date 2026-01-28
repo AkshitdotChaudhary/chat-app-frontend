@@ -1,0 +1,70 @@
+@import "../../../assets/scss/variables";
+
+:host::ng-deep {
+    .logos{
+        max-width: 250px;
+    }
+    .login {
+        &-wrap {
+            background-color: $cardbg;
+
+            .p {
+                &-card {
+                    border-radius: 20px;
+                    box-shadow: none;
+                    border:1px solid #FFFAE1;
+                }
+            }
+        }
+
+        &-bg {
+            min-height: 100vh;
+            background: url(../../../assets/images/cpo-portal/login-bg.jpg) no-repeat center center;
+            background-size: cover;
+        }
+
+        &-header {
+            font-size: 1.4em;
+            line-height: 1.5em;
+
+            span {
+                font-size: .8em;
+                color: $gray-alpha;
+                font-weight: normal;
+            }
+        }
+    }
+
+    .cmn {
+        &-pass {
+            input {
+                width: 100%;
+            }
+        }
+
+        &-btn {
+            background-color: $blue;
+            border-radius: 8px;
+        }
+    }
+
+    .forgot {
+        &-pass {
+            color: $black;
+            text-decoration: none;
+            font-size: .9em;
+        }
+    }
+
+    .signup {
+        p {
+            font-size: .9em;
+            color: $black;
+
+            a {
+                color: $blue;
+                font-size: 1em;
+            }
+        }
+    }
+}

@@ -6,17 +6,24 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EncrytionService } from '../../services/encrytion.service';
 import { HttpResponse } from '@angular/common/http';
+import { PasswordModule } from 'primeng/password';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { CardModule } from 'primeng/card';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule , PasswordModule , InputTextModule , ButtonModule , FloatLabelModule , CardModule , MessageModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   isLogin = true;
   authForm: FormGroup;
+  loginForm!: FormGroup;
   router = inject(Router);
   constructor(private fb: FormBuilder, private auth : AuthService) {
     this.authForm = this.fb.group({
@@ -25,11 +32,18 @@ export class LoginComponent {
     });
   }
 
+    ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      loginId: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
   toggleMode() {
     this.isLogin = !this.isLogin;
   }
 
-  submit() {
+  onSubmit() {
     if (this.authForm.invalid) return;
 
     if (this.isLogin) {
