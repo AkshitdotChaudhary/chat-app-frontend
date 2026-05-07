@@ -1,59 +1,113 @@
-# WebsocketChat
+# 💬 Real-Time Chat Application — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.7.
+The Angular frontend for a production-grade real-time chat application. Communicates with a **Spring Boot backend** via REST APIs and **WebSocket (STOMP)** for instant, low-latency messaging.
 
-## Development server
+🔗 **Backend Repository:** [chat-app-backend](https://github.com/AkshitdotChaudhary/chat-app-backend)
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## 🚀 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Angular 19 |
+| Language | TypeScript |
+| Real-Time | WebSocket + STOMP Protocol |
+| Reactive Programming | RxJS Observables |
+| Styling | SCSS |
+| Auth | JWT Token handling |
+| Build Tool | Angular CLI |
+
+---
+
+## ✨ Features
+
+- **Real-time messaging** — WebSocket (STOMP) integration for instant message delivery without page refresh
+- **Reactive UI** — RxJS observables consume live WebSocket events and REST API responses reactively
+- **JWT Authentication** — Token stored and attached to every outgoing HTTP request via interceptors
+- **Role-Based UI** — Route guards enforce access control based on user roles
+- **Component-driven architecture** — Modular Angular components with clean separation of concerns
+- **Responsive design** — Works across desktop and mobile screen sizes
+
+---
+
+## 🏗️ Architecture
+
+```
+Angular App
+├── Auth Module
+│   ├── Login Component
+│   ├── Register Component
+│   └── JWT Interceptor (attaches token to all requests)
+│
+├── Chat Module
+│   ├── Chat Room Component
+│   ├── Message List Component
+│   └── WebSocket Service (STOMP client)
+│
+└── Core
+    ├── Auth Guard (route protection)
+    ├── API Service (REST calls)
+    └── RxJS State Management
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## ⚙️ Getting Started
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Prerequisites
 
-```bash
-ng generate component component-name
-```
+- Node.js 18+
+- Angular CLI 19+
+- Backend running at `http://localhost:8080` → [Setup guide](https://github.com/AkshitdotChaudhary/chat-app-backend)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Setup
 
-```bash
-ng generate --help
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/AkshitdotChaudhary/chat-app-frontend.git
+   cd chat-app-frontend
+   ```
 
-## Building
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-To build the project run:
+3. **Configure backend URL** in `src/environments/environment.ts`:
+   ```typescript
+   export const environment = {
+     apiUrl: 'http://localhost:8080/api',
+     wsUrl: 'ws://localhost:8080/ws'
+   };
+   ```
 
-```bash
-ng build
-```
+4. **Run the app**
+   ```bash
+   ng serve
+   ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+5. **Open** `http://localhost:4200`
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🔌 Backend Integration
 
-```bash
-ng test
-```
+This frontend connects to the Spring Boot backend for:
 
-## Running end-to-end tests
+| Feature | Protocol | Endpoint |
+|---|---|---|
+| Register / Login | REST (HTTP) | `/api/auth/**` |
+| Send Message | WebSocket (STOMP) | `/app/chat.send` |
+| Receive Messages | WebSocket (STOMP) | `/topic/messages` |
+| Message History | REST (HTTP) | `/api/messages` |
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
-```
+## 👨‍💻 Author
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+**Akshit Chaudhary** — Backend Developer | Java • Spring Boot • Microservices
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- 📧 akshitchaudhary640@gmail.com
+- 💼 [LinkedIn](https://www.linkedin.com/in/akshit-chaudhary-b34839312)
+- 🐙 [GitHub](https://github.com/AkshitdotChaudhary)
