@@ -3,16 +3,18 @@ import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
 import { Client, IMessage, Stomp } from '@stomp/stompjs';
 import { ChatMessage } from '../model/chatMessage';
+import { environment } from '../../environment/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  private baseUrl = environment.BASE_URL;
   private stompClient: Client | null = null;
   private messagesSubject = new Subject<ChatMessage>();
 
-  connect(conversationId : Number): void {
-    const socket = new SockJS('http://10.8.0.8:8184/ws');
+  connect(conversationId: Number): void {
+    const socket = new SockJS(`${this.baseUrl}/ws`);
     this.stompClient = Stomp.over(() => socket);
 
     if (this.stompClient) {
@@ -34,17 +36,21 @@ export class ChatService {
   }
 
   sendMessage(message: ChatMessage): void {
-  if (this.stompClient && this.stompClient.connected) {
-    this.stompClient.publish({
-      destination: `/app/chat.send/${message.conversationId}`,
-      body: JSON.stringify(message)
-    });
-  } else {
-    console.warn('STOMP client not connected');
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.publish({
+        destination: `/app/chat.send/${message.conversationId}`,
+        body: JSON.stringify(message)
+      });
+    } else {
+      console.warn('STOMP client not connected');
+    }
   }
-}
 
   onMessage(): Observable<ChatMessage> {
     return this.messagesSubject.asObservable();
+  }
+
+  loadPreviousMessages(){
+    
   }
 }
