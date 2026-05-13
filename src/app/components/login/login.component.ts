@@ -12,16 +12,19 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule , PasswordModule , InputTextModule , ButtonModule , FloatLabelModule , CardModule , MessageModule],
+  imports: [CommonModule ,ReactiveFormsModule , PasswordModule , InputTextModule , ButtonModule , FloatLabelModule , CardModule , MessageModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   isLogin = true;
+  isLoading: any;
+  passwordAttemts: any;
   authForm: FormGroup;
   loginForm!: FormGroup;
   router = inject(Router);
