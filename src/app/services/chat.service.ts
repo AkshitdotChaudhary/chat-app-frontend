@@ -9,7 +9,7 @@ import { environment } from '../../environment/environment.development';
   providedIn: 'root'
 })
 export class ChatService {
-  private baseUrl = environment.BASE_URL;
+  private baseUrl = environment.apiUrl;
   private stompClient: Client | null = null;
   private messagesSubject = new Subject<ChatMessage>();
 

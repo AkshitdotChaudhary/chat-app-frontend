@@ -1,32 +1,27 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EncrytionService } from '../../services/encrytion.service';
 import { HttpResponse } from '@angular/common/http';
-import { PasswordModule } from 'primeng/password';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { CardModule } from 'primeng/card';
-import { MessageModule } from 'primeng/message';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule ,ReactiveFormsModule , PasswordModule , InputTextModule , ButtonModule , FloatLabelModule , CardModule , MessageModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   isLogin = true;
   isLoading: any;
   passwordAttemts: any;
   authForm: FormGroup;
   loginForm!: FormGroup;
+  passwordVisible = false;
   router = inject(Router);
   constructor(private fb: FormBuilder, private auth : AuthService) {
     this.authForm = this.fb.group({
@@ -35,11 +30,15 @@ export class LoginComponent {
     });
   }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.loginForm = this.fb.group({
       loginId: ['', Validators.required],
       password: ['', Validators.required]
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   toggleMode() {

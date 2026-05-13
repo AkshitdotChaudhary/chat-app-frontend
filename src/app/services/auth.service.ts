@@ -9,7 +9,7 @@ import { environment } from '../../environment/environment.development';
 })
 export class AuthService {
 
-  private baseUrl = `${environment.BASE_URL}/auth/`;
+  private baseUrl = `${environment.apiUrl}/auth/`;
   router = inject(Router);
 
   constructor(private http: HttpClient) { }
