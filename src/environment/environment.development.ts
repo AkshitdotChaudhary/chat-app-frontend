@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: 'http://localhost:8080/api',
-  wsUrl: 'ws://localhost:8080/ws'
+  apiUrl: 'http://localhost:8184/api',
+  wsUrl: 'ws://localhost:8184/ws'
 };

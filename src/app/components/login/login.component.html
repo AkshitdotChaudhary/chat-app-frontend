@@ -13,10 +13,10 @@
 
       <div class="field">
         <label class="field-label" for="login-email">Email ID</label>
-        <input id="login-email" type="email" formControlName="loginId" class="login-control"
-          [class.login-control--invalid]="loginForm.get('loginId')?.invalid && loginForm.get('loginId')?.touched"
+        <input id="login-email" type="email" formControlName="username" class="login-control"
+          [class.login-control--invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
           placeholder="Email ID" autocomplete="username" inputmode="email" />
-        <small *ngIf="loginForm.get('loginId')?.touched && loginForm.get('loginId')?.invalid" class="error-text">
+        <small *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid" class="error-text">
           Email ID is required
         </small>
       </div>

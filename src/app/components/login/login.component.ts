@@ -16,23 +16,21 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-  isLogin = true;
-  isLoading: any;
-  passwordAttemts: any;
-  authForm: FormGroup;
+
   loginForm!: FormGroup;
   passwordVisible = false;
+
   router = inject(Router);
-  constructor(private fb: FormBuilder, private auth : AuthService) {
-    this.authForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-  }
+
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService
+  ) {}
 
   ngOnInit(): void {
+
     this.loginForm = this.fb.group({
-      loginId: ['', Validators.required],
+      username: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
@@ -41,42 +39,39 @@ export class LoginComponent implements OnInit {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  toggleMode() {
-    this.isLogin = !this.isLogin;
-  }
-
   onSubmit() {
-    if (this.authForm.invalid) return;
 
-    if (this.isLogin) {
-      this.auth.login(this.authForm.value).subscribe((response : HttpResponse<any> )=> {
-        if (response.body.status === 1) {
-          localStorage.setItem("profile",JSON.stringify(response.body));
+    if (this.loginForm.invalid) {
+      console.log(this.loginForm.errors);
+      return;
+    }
+
+    this.auth.login(this.loginForm.value)
+      .subscribe((response: HttpResponse<any>) => {
+
+        console.log(response);
+
+        if (response.body.responseStatus == "001") {
+
+          localStorage.setItem(
+            "profile",
+            JSON.stringify(response.body)
+          );
+
           const token = response.headers.get("token");
+
           if (token) {
-            localStorage.setItem("token",EncrytionService.decrypt(token));
+            localStorage.setItem(
+              "token",
+              EncrytionService.decrypt(token)
+            );
           }
-          else{
-            console.log("no token")
-          }
+
           this.router.navigate(['/chat']);
+
+        } else {
+          alert(response.body.responseMessage);
         }
-        else {
-          alert("something went wrong!");
-        }
-      })
-    }
-    else {
-          this.auth.signup(this.authForm).subscribe((res: any) => {
-      if(res.success === true){
-        localStorage.setItem('loginUser', res.userID);
-        localStorage.setItem('token',res.token);
-        this.router.navigate(['/home']);
-      }
-      else{
-        alert(res.message);
-      }
-    })
-    }
+      });
   }
 }
