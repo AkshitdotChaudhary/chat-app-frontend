@@ -9,40 +9,64 @@ import { environment } from '../../environment/environment.development';
   providedIn: 'root'
 })
 export class ChatService {
-  private baseUrl = environment.apiUrl;
+  private baseUrl = environment.wsUrl;
   private stompClient: Client | null = null;
   private messagesSubject = new Subject<ChatMessage>();
 
-  connect(conversationId: Number): void {
-    const socket = new SockJS(`${this.baseUrl}/ws`);
-    this.stompClient = Stomp.over(() => socket);
+  connect(conversationId: number): void {
+    if (this.stompClient?.connected) {
+      return;
+    }
 
-    if (this.stompClient) {
-      this.stompClient.onConnect = () => {
-        this.stompClient?.subscribe('/topic/conversation/' + conversationId, (msg: IMessage | null) => {
-          if (msg && msg.body) {
-            const payload = JSON.parse(msg.body) as ChatMessage;
-            this.messagesSubject.next(payload);
-          }
-        });
-      };
+    const socket = new SockJS(this.baseUrl);
+    this.stompClient = Stomp.over(() => socket);
+    this.stompClient.debug = () => undefined;
+
+    this.stompClient.onConnect = () => {
+      this.stompClient?.subscribe(`/topic/conversation/${conversationId}`, (msg: IMessage | null) => {
+        if (msg?.body) {
+          this.messagesSubject.next(JSON.parse(msg.body) as ChatMessage);
+        }
+      });
+    };
+
+    this.stompClient.onStompError = frame => {
+      console.warn('STOMP error', frame.headers['message']);
+    };
+
+    try {
       this.stompClient.activate();
+    } catch (error) {
+      console.warn('Unable to connect to chat server', error);
     }
   }
 
-  disconnect(): void {
-    this.stompClient?.deactivate();
-    this.stompClient = null;
+  reconnect(conversationId: number): void {
+    this.disconnect();
+    this.connect(conversationId);
   }
 
-  sendMessage(message: ChatMessage): void {
-    if (this.stompClient && this.stompClient.connected) {
-      this.stompClient.publish({
-        destination: `/app/chat.send/${message.conversationId}`,
-        body: JSON.stringify(message)
-      });
-    } else {
+  get connected(): boolean {
+    return !!this.stompClient?.connected;
+  }
+
+  sendMessage(message: ChatMessage): boolean {
+    if (!this.stompClient?.connected) {
       console.warn('STOMP client not connected');
+      return false;
+    }
+
+    this.stompClient.publish({
+      destination: `/app/chat.send/${message.conversationId}`,
+      body: JSON.stringify(message)
+    });
+    return true;
+  }
+
+  disconnect(): void {
+    if (this.stompClient) {
+      this.stompClient.deactivate();
+      this.stompClient = null;
     }
   }
 
@@ -50,7 +74,7 @@ export class ChatService {
     return this.messagesSubject.asObservable();
   }
 
-  loadPreviousMessages(){
-    
+  loadPreviousMessages(): ChatMessage[] {
+    return [];
   }
 }

@@ -8,25 +8,24 @@ import { environment } from '../../environment/environment.development';
   providedIn: 'root'
 })
 export class AuthService {
-
   private baseUrl = `${environment.apiUrl}/auth/`;
   router = inject(Router);
 
   constructor(private http: HttpClient) { }
 
-  signup(credentials: any): Observable<any> {
+  signup(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}signup`, credentials);
   }
 
-  login(credentials: any): Observable<any> {
+  login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}login`, credentials , {
       observe: 'response',
     });
   }
 
-  logout() {
+  logout(): void {
     localStorage.clear();
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {

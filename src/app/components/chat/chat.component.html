@@ -1,21 +1,116 @@
-<div class="chat-container">
-  <h3>WebSocket Chat</h3>
+<main class="chat-layout">
+  <aside class="chat-sidebar" [class.is-open]="isSidebarOpen">
+    <header class="pane-header">
+      <a class="identity" routerLink="/profile" aria-label="Open profile">
+        <span class="avatar avatar-primary">{{ displayInitials }}</span>
+        <span class="identity-copy">
+          <strong>{{ displayName }}</strong>
+          <small>Available</small>
+        </span>
+      </a>
 
-  <div class="messages" #scrollBox>
-    <div *ngFor="let m of messages; trackBy: trackById"
-         [class.self]="m.senderId === senderId">
-      <strong>{{ m.senderId }}:</strong> {{ m.content }}
+      <div class="header-actions">
+        <button class="icon-btn" type="button" aria-label="Start chat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h8" /><path d="M19 3v6" /><path d="M16 6h6" /></svg>
+        </button>
+        <button class="icon-btn" type="button" aria-label="Log out" (click)="logout()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="search-area" aria-label="Search conversations">
+      <label class="search-control">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+        <input [(ngModel)]="searchTerm" type="search" placeholder="Search or start a chat" />
+      </label>
+    </section>
+
+    <nav class="filter-row" aria-label="Conversation filters">
+      <button type="button" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">All</button>
+      <button type="button" [class.active]="activeFilter === 'unread'" (click)="setFilter('unread')">Unread</button>
+      <button type="button" [class.active]="activeFilter === 'groups'" (click)="setFilter('groups')">Groups</button>
+    </nav>
+
+    <section class="conversation-list" aria-label="Conversation list">
+      <button
+        class="conversation-item"
+        *ngFor="let conversation of filteredConversations; trackBy: trackByConversationId"
+        [class.active]="conversation.id === conversationId"
+        type="button"
+        (click)="selectConversation(conversation)"
+      >
+        <span class="avatar" [class.online]="conversation.online">{{ conversation.initials }}</span>
+        <span class="conversation-copy">
+          <span class="conversation-top">
+            <strong>{{ conversation.name }}</strong>
+            <time>{{ conversation.time }}</time>
+          </span>
+          <span class="conversation-bottom">
+            <span>{{ conversation.lastMessage }}</span>
+            <small *ngIf="conversation.unread">{{ conversation.unread }}</small>
+          </span>
+        </span>
+      </button>
+    </section>
+  </aside>
+
+  <section class="chat-pane">
+    <header class="pane-header chat-topbar">
+      <button class="icon-btn mobile-only" type="button" aria-label="Show conversations" (click)="toggleSidebar()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" /><path d="M3 12h18" /><path d="M3 18h18" /></svg>
+      </button>
+
+      <span class="avatar online">{{ activeConversation.initials }}</span>
+      <span class="chat-title">
+        <strong>{{ activeConversation.name }}</strong>
+        <small>{{ activeConversation.online ? 'Online' : 'Last seen recently' }}</small>
+      </span>
+
+      <div class="header-actions">
+        <button class="icon-btn" type="button" aria-label="Search messages">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" /></svg>
+        </button>
+        <a class="icon-btn" routerLink="/profile" aria-label="Conversation info">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+        </a>
+      </div>
+    </header>
+
+    <div class="message-list" #scrollBox>
+      <div class="date-pill">Today</div>
+
+      <section class="empty-state" *ngIf="messages.length === 0">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" /></svg>
+        <strong>No messages yet</strong>
+        <span>Start the conversation with {{ activeConversation.name }}.</span>
+      </section>
+
+      <article
+        class="message-row"
+        *ngFor="let message of messages; trackBy: trackByMessageId"
+        [class.self]="message.senderId === senderId"
+      >
+        <div class="message-bubble">
+          <span class="sender" *ngIf="message.senderId !== senderId">User {{ message.senderId }}</span>
+          <p>{{ message.content }}</p>
+          <time>{{ message.createdAt }}<span *ngIf="message.status === 'offline'"> offline</span></time>
+        </div>
+      </article>
     </div>
-  </div>
 
-  <div class="input-area">
-    <input
-      [(ngModel)]="content"
-      placeholder="Message"
-      (keyup.enter)="send()"
-    />
-    <button (click)="send()">Send</button>
+    <footer class="composer">
+      <button class="icon-btn" type="button" aria-label="Attach">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
+      </button>
 
-    <button class="logout" (click)="logout()">Log Out</button>
-  </div>
-</div>
+      <label class="message-control">
+        <input [(ngModel)]="content" placeholder="Type a message" autocomplete="off" (keyup.enter)="send()" />
+      </label>
+
+      <button class="send-btn" type="button" aria-label="Send" (click)="send()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" /></svg>
+      </button>
+    </footer>
+  </section>
+</main>

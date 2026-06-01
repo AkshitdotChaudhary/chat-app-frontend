@@ -1,0 +1,62 @@
+<main class="auth-page">
+  <section class="auth-visual" aria-label="Product preview">
+    <div class="auth-device">
+      <div class="auth-chat-row">
+        <span class="avatar">WC</span>
+        <span>
+          <strong>WebSocket Chat</strong>
+          <small>Fast, focused, responsive.</small>
+        </span>
+      </div>
+      <div class="auth-bubble auth-bubble-in">Create rooms, send messages, and stay synced.</div>
+      <div class="auth-bubble auth-bubble-out">Works cleanly on desktop and mobile.</div>
+    </div>
+  </section>
+
+  <section class="auth-card" aria-labelledby="signup-title">
+    <header class="auth-header">
+      <span class="brand-mark">WC</span>
+      <h1 id="signup-title">Create Account</h1>
+      <p>Start chatting with a secure account.</p>
+    </header>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="username" placeholder="you@example.com" autocomplete="username" />
+        <small *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
+          Enter a valid email address.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Password</span>
+        <span class="password-field">
+          <input formControlName="password" [type]="passwordVisible ? 'text' : 'password'" placeholder="Minimum 6 characters" autocomplete="new-password" />
+          <button type="button" (click)="togglePasswordVisibility()">{{ passwordVisible ? 'Hide' : 'Show' }}</button>
+        </span>
+        <small *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+          Password must be at least 6 characters.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Confirm Password</span>
+        <input formControlName="confirmPassword" [type]="passwordVisible ? 'text' : 'password'" placeholder="Repeat password" autocomplete="new-password" />
+        <small *ngIf="signupForm.touched && signupForm.hasError('passwordMismatch')">
+          Passwords must match.
+        </small>
+      </label>
+
+      <p class="form-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button class="primary-action" type="submit" [disabled]="loading">
+        {{ loading ? 'Creating...' : 'Create account' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already registered? <a routerLink="/login">Sign in</a>
+    </p>
+  </section>
+</main>

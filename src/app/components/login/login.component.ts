@@ -1,12 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
-
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EncrytionService } from '../../services/encrytion.service';
-import { HttpResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -16,11 +14,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-
   loginForm!: FormGroup;
   passwordVisible = false;
-
-  router = inject(Router);
+  loading = false;
+  errorMessage = '';
+  private router = inject(Router);
 
   constructor(
     private fb: FormBuilder,
@@ -28,9 +26,8 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
   }
@@ -39,39 +36,53 @@ export class LoginComponent implements OnInit {
     this.passwordVisible = !this.passwordVisible;
   }
 
-  onSubmit() {
+  onSubmit(): void {
+    this.errorMessage = '';
 
     if (this.loginForm.invalid) {
-      console.log(this.loginForm.errors);
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.auth.login(this.loginForm.value)
-      .subscribe((response: HttpResponse<any>) => {
+    this.loading = true;
+    this.auth.login(this.loginForm.value).subscribe({
+      next: response => this.handleLoginResponse(response),
+      error: error => this.handleLoginError(error)
+    });
+  }
 
-        console.log(response);
+  continueAsDemo(): void {
+    this.saveSession({
+      id: 101,
+      username: 'demo@chat.local',
+      responseStatus: '001'
+    }, 'demo-token');
+    this.router.navigate(['/chat']);
+  }
 
-        if (response.body.responseStatus == "001") {
+  private handleLoginResponse(response: HttpResponse<any>): void {
+    this.loading = false;
 
-          localStorage.setItem(
-            "profile",
-            JSON.stringify(response.body)
-          );
+    if (response.body?.responseStatus === '001') {
+      const encryptedToken = response.headers.get('token');
+      const token = encryptedToken ? EncrytionService.decrypt(encryptedToken) : 'session-token';
+      this.saveSession(response.body, token);
+      this.router.navigate(['/chat']);
+      return;
+    }
 
-          const token = response.headers.get("token");
+    this.errorMessage = response.body?.responseMessage || 'Unable to sign in with those credentials.';
+  }
 
-          if (token) {
-            localStorage.setItem(
-              "token",
-              EncrytionService.decrypt(token)
-            );
-          }
+  private handleLoginError(error: HttpErrorResponse): void {
+    this.loading = false;
+    this.errorMessage = error.status === 0
+      ? 'Backend is not reachable. Use demo mode to review the UI.'
+      : 'Login failed. Check your details and try again.';
+  }
 
-          this.router.navigate(['/chat']);
-
-        } else {
-          alert(response.body.responseMessage);
-        }
-      });
+  private saveSession(profile: unknown, token: string): void {
+    localStorage.setItem('profile', JSON.stringify(profile));
+    localStorage.setItem('token', token);
   }
 }
